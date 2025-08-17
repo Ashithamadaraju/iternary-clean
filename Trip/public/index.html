@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌟 Neon AI Travel Itinerary</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+body {
+  font-family: 'Orbitron', sans-serif;
+  background: #0f0f0f;
+  color: #0ff;
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* Welcome Screen */
+#welcomeScreen {
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  background: radial-gradient(circle at center, #0f0f0f, #050505);
+  display:flex; align-items:center; justify-content:center; flex-direction:column;
+  color:#0ff; text-align:center; z-index:10;
+  overflow:hidden;
+}
+#welcomeScreen h1 {
+  font-size: 3rem;
+  text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
+  margin-bottom: 20px;
+}
+#startBtn {
+  background: #0ff;
+  color: #000;
+  font-weight: 700;
+  font-size: 1.2rem;
+  padding: 12px 28px;
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 0 20px #0ff, 0 0 40px #0ff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+#startBtn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px #0ff, 0 0 60px #0ff;
+}
+
+/* Hero Section */
+.hero {
+  background: #050505;
+  border: 2px solid #0ff;
+  border-radius: 15px;
+  height: 250px;
+  display:flex; align-items:center; justify-content:center;
+  text-align:center; flex-direction:column;
+  margin-bottom: 40px;
+  box-shadow: 0 0 20px #0ff, 0 0 40px #0ff;
+}
+.hero h1 { font-size: 2.5rem; color:#0ff; }
+
+/* Card */
+.card {
+  background: rgba(0,0,0,0.85);
+  border: 2px solid #0ff;
+  border-radius: 15px;
+  box-shadow: 0 0 15px #0ff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover { transform: translateY(-5px); box-shadow: 0 0 25px #0ff; }
+
+/* Buttons */
+.btn-primary {
+  background: #0ff; border:none; color:#000;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-primary:hover { transform: scale(1.05); box-shadow: 0 0 20px #0ff; }
+
+.result-section { animation: slideUp 1s ease forwards; margin-bottom:20px; color:#0ff; }
+pre { white-space: pre-wrap; word-wrap: break-word; }
+
+.loader {
+  border: 6px solid #111;
+  border-top: 6px solid #0ff;
+  border-radius: 50%;
+  width:50px; height:50px;
+  animation: spin 1s linear infinite;
+  margin:auto;
+}
+@keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+@keyframes slideUp { from {opacity:0; transform: translateY(20px);} to {opacity:1; transform: translateY(0);} }
+
+input, select {
+  background: #111;
+  color: #0ff;
+  border: 1px solid #0ff;
+}
+input:focus, select:focus { box-shadow: 0 0 8px #0ff; border-color: #0ff; }
+
+@media (max-width:576px) {
+  .hero { height:180px; }
+  #mainContent { padding:1rem; }
+}
+</style>
+</head>
+<body>
+
+<div id="welcomeScreen">
+  <h1> Welcome to AW Travel Itinerary Generator</h1>
+  <button id="startBtn">Start Exploring</button>
+</div>
+
+<div class="container py-5" id="mainContent" style="display:none;">
+  <div class="hero mb-5" data-aos="fade-in">
+    <h1> Trips aren’t just planned, they’re crafted – every route, every vibe, every memory starts here</h1>
+  </div>
+
+  <div class="card p-4 mb-5 d-none" id="formCard" data-aos="fade-up">
+    <form id="itineraryForm">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Start City</label>
+          <input type="text" name="startCity" class="form-control" placeholder="Delhi" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Destination City</label>
+          <input type="text" name="destinationCity" class="form-control" placeholder="Paris" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Number of Days</label>
+          <input type="number" name="days" class="form-control" value="5" min="1" max="15" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Theme</label>
+          <input type="text" name="theme" class="form-control" placeholder="Adventure, Foodie, Cultural" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Budget (₹)</label>
+          <input type="number" name="budget" class="form-control" placeholder="Enter your budget" min="0">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Email <span style="color:#f00">*</span></label>
+          <input type="email" name="email" class="form-control" placeholder="example@gmail.com" required>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary w-100 mt-3" id="submitBtn"><i class="bi bi-compass-fill"></i> Generate Itinerary</button>
+    </form>
+  </div>
+
+  <div id="resultContainer"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+AOS.init();
+
+document.getElementById("startBtn").addEventListener("click", () => {
+  document.getElementById("welcomeScreen").style.display = "none";
+  document.getElementById("mainContent").style.display = "block";
+  document.getElementById("formCard").classList.remove("d-none");
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+const form = document.getElementById("itineraryForm");
+const resultContainer = document.getElementById("resultContainer");
+const submitBtn = document.getElementById("submitBtn");
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  submitBtn.disabled = true;
+  resultContainer.innerHTML = `<div class="loader my-5"></div>`;
+
+  const data = Object.fromEntries(new FormData(form));
+
+  // Email validation
+  if(!/^\S+@\S+\.\S+$/.test(data.email)){
+    alert("Please enter a valid email!");
+    submitBtn.disabled = false;
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/itinerary/generate", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+
+    if (json.success) {
+      const itineraryHtml = json.itinerary.split('\n').map(line => `<p>${line}</p>`).join('');
+      resultContainer.innerHTML = `
+        <div class="card p-4 result-section" data-aos="fade-up">
+          <h3>🧾 Itinerary</h3>${itineraryHtml}
+        </div>
+        <div class="card p-4 result-section" data-aos="fade-up" data-aos-delay="100">
+          <h3>🌤️ Weather</h3><p>${json.weather || 'Weather info not available'}</p>
+        </div>
+      `;
+
+      const toastEl = document.createElement('div');
+      toastEl.className = 'toast align-items-center text-white bg-success border-0 position-fixed top-0 end-0 m-3';
+      toastEl.setAttribute('role','alert');
+      toastEl.setAttribute('aria-live','assertive');
+      toastEl.setAttribute('aria-atomic','true');
+      toastEl.innerHTML = `
+        <div class="d-flex">
+          <div class="toast-body">✅ Thank you! Email sent successfully.</div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>`;
+      document.body.appendChild(toastEl);
+      const toast = new bootstrap.Toast(toastEl, { delay: 4000 });
+      toast.show();
+      toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
+
+    } else {
+      resultContainer.innerHTML = `<div class="alert alert-danger">Error: ${json.error}</div>`;
+    }
+  } catch(err) {
+    resultContainer.innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`;
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
