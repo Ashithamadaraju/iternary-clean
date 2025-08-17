@@ -7,18 +7,35 @@ export const generateItinerary = async (req, res) => {
   try {
     const { startCity, destinationCity, days, theme, email } = req.body;
 
-    const itinerary = await generatePlan(startCity, destinationCity, days, theme);
+    // 1. Generate itinerary text using OpenAI
+    const itinerary = await generatePlan(
+      startCity,
+      destinationCity,
+      days,
+      theme
+    );
 
-    const qr = await generateQRCode(`https://maps.google.com/?q=${destinationCity}`);
-    const pdfBuffer = await generatePDF(itinerary, qr);
+    // 2. Generate QR code buffer (Google Maps link)
+    const qrBuffer = await generateQRCode(
+      `https://maps.google.com/?q=${destinationCity}`
+    );
 
+    // 3. Generate PDF buffer (includes itinerary + QR code inside PDF)
+    const pdfBuffer = await generatePDF(itinerary, qrBuffer);
+
+    // 4. Send email if email is provided
     if (email) {
-      await sendEmail(email, pdfBuffer);
+      await sendEmail(email, pdfBuffer, qrBuffer); // sends both PDF + QR image
     }
 
-    res.json({ success: true, itinerary });
+    // 5. Send PDF back to browser for download
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "attachment; filename=itinerary.pdf");
+    res.send(pdfBuffer);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, error: err.message });
+    console.error("Error generating itinerary:", err);
+    res
+      .status(500)
+      .json({ success: false, error: err.message || "Internal Server Error" });
   }
 };

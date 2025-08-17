@@ -1,10 +1,16 @@
-import QRCode from 'qrcode';
+import QRCode from "qrcode";
 
-export const generateQRCode = async (url) => {
-  return new Promise((resolve, reject) => {
-    QRCode.toDataURL(url, { errorCorrectionLevel: 'H' }, (err, dataUrl) => {
-      if (err) reject(err);
-      else resolve(dataUrl);
+// Generate a QR code and return it as a Buffer
+export const generateQRCode = async (text) => {
+  try {
+    const buffer = await QRCode.toBuffer(text, {
+      type: "png",    // output format
+      errorCorrectionLevel: "H", // best error correction
+      width: 300,     // size in pixels
     });
-  });
+    return buffer;
+  } catch (error) {
+    console.error("Error generating QR code:", error);
+    throw error;
+  }
 };
