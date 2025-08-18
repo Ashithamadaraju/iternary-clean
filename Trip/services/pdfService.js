@@ -31,6 +31,6 @@ export const generatePDF = async (itinerary, qrBuffer) => {
   doc.end();
 
   // Convert the PDF stream to a Buffer
-  const buffer = await getStream.buffer(doc);
+  const buffer = Buffer.from(await getStream(doc));
   return buffer;
 };
