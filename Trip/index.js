@@ -1,13 +1,10 @@
-// Allow self-signed certificates (local testing only)
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
 import express from "express";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import itineraryRoutes from "./routes/itineraryRoutes.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import open from "open"; // <-- import open
+import open from "open"; // still useful locally
 
 dotenv.config();
 const app = express();
@@ -30,11 +27,14 @@ app.get("/", (req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 3000;
-const HOST = "localhost";
-const url = `http://${HOST}:${PORT}`;
+const HOST = "0.0.0.0"; // ✅ important for deployment
+const url = `http://localhost:${PORT}`;
 
 app.listen(PORT, async () => {
-  console.log(`🚀 Server running at: ${url}`);
-  // Automatically open the URL in default browser
-  await open(url);
+  console.log(`🚀 Server running on port ${PORT}`);
+
+  // Open browser only if running locally
+  if (process.env.NODE_ENV !== "production") {
+    await open(url);
+  }
 });
